@@ -1,4 +1,4 @@
-# Nerfies
+# ZK Task Planner
 
 This is the repository that contains source code for the [ZK Task Planner website](https://zk-planning.github.io).
 
