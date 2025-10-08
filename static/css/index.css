@@ -23,6 +23,22 @@ body {
   padding-bottom: 3rem;
 }
 
+#teaser {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+#example {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  height: auto;
+}
+
 .teaser {
   font-family: 'Google Sans', sans-serif;
 }
@@ -154,4 +170,29 @@ body {
 }
 #interpolation-image-wrapper img {
   border-radius: 5px;
+}
+
+.table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.has-background-success-light td {
+  font-weight: 600;
+}
+
+.box p {
+  hyphens: none;
+  word-break: normal;
+  line-height: 1.6;
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.box .title {
+  margin-bottom: 0.75rem;
 }

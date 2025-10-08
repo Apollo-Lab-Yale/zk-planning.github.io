@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="Demonstration of Zero-Knowledge Task Planning in AI2-THOR simulator.">
-  <meta name="keywords" content="Zero-Knowledge Task Planning, AI2-THOR, Robotics, Task Planning">
+        content="We introduce and formalize the Zero-Knowledge Task Planning (ZKTP) problem and present a language-based approach using LLMs to generate behavior trees for task execution without task-specific knowledge.">
+  <meta name="keywords" content="Zero-Knowledge Task Planning, ZKTP, LLM, Behavior Trees, AI2-THOR, Robotics, Task Planning, Language Models">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Zero-Knowledge Task Planning</title>
+  <title>Towards Zero-Knowledge Task Planning via a Language-based Approach</title>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
@@ -88,7 +88,7 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">A Language-based Approach for Zero-Knowledge Task Planning</h1>
+          <h1 class="title is-1 publication-title">Towards Zero-Knowledge Task Planning via a Language-based Approach</h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
               <a href="https://liammz.github.io/">Liam Merz Hoffmeister</a><sup>1</sup>,</span>
@@ -120,7 +120,7 @@
                   <span class="icon">
                       <i class="ai ai-arxiv"></i>
                   </span>
-                  <span>arXiv (Coming Soon!)</span>
+                  <span>arXiv</span>
                 </a>
               </span>
               <!-- Video Link. -->
@@ -141,6 +141,16 @@
                       <i class="fab fa-github"></i>
                   </span>
                   <span>Code</span>
+                  </a>
+              </span>
+              <!-- Chat Interaction Link. -->
+              <span class="link-block">
+                <a href="full_chat_interaction.html"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-comments"></i>
+                  </span>
+                  <span>Full Chat Interaction</span>
                   </a>
               </span>
 
@@ -173,14 +183,14 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
-          <p>We present an approach that addresses the <i>Zero-Knowledge</i> task planning problem, i.e. planning high-level actions to achieve a given goal without any task-specific information. Our approach leverages a large language model (LLM) to decompose natural language instructions into subtasks and generate behavior trees (BTs) for execution. If errors arise during task execution, the approach also uses an LLM to adjust the BTs on-the-fly in a refinement loop. Experimental validation in the AI2-THOR simulator demonstrates our approach's effectiveness in improving overall task performance compared to alternative approaches, even though all of these approaches rely on task-specific knowledge. Our work demonstrates the potential of LLMs to effectively address the Zero-Knowledge task planning problem, providing a robust framework for automated behavior generation in dynamic environments.</p>
+          <p>We introduce and formalize the <i>Zero-Knowledge Task Planning (ZKTP)</i> problem, i.e., formulating a sequence of actions to achieve some goal without task-specific knowledge. Additionally, we present a first investigation and approach for ZKTP that leverages a large language model (LLM) to decompose natural language instructions into subtasks and generate behavior trees (BTs) for execution. If errors arise during task execution, the approach also uses an LLM to adjust the BTs on-the-fly in a refinement loop. Experimental validation in the AI2-THOR simulator demonstrate our approach's effectiveness in improving overall task performance compared to alternative approaches that leverage task-specific knowledge. Our work demonstrates the potential of LLMs to effectively address several aspects of the ZKTP problem, providing a robust framework for automated behavior generation with no task-specific setup.</p>
         </div>
       </div>
     </div>
     <!--/ Abstract. -->
 
       <section class="hero teaser">
-          <div class="container">
+          <div class="container is-max-desktop">
             <div class="hero-body">
               <img id="example" src="./static/images/example_task.png" alt="zk-task-planning example"/>
               <h2 class="subtitle has-text-centered">
@@ -189,6 +199,40 @@
             </div>
           </div>
         </section>
+
+    <!-- Problem Definition. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Zero-Knowledge Task Planning Problem</h2>
+        <div class="content has-text-justified">
+          <p>
+            We formalize the <strong>Zero-Knowledge Task Planning (ZKTP)</strong> problem as follows:
+          </p>
+          <div class="box">
+            <p>
+              Zero-Knowledge task planning refers to the process of generating a sequence of actions, denoted by
+              π = [a<sub>1</sub>, a<sub>2</sub>, . . . , a<sub>n</sub>], to successfully achieve a given goal, <strong>G</strong>,
+              without relying on any prior knowledge specific to the task at hand. The only permissible information available
+              to the agent in Zero-Knowledge task planning is task-agnostic and remains fixed and invariant across all potential tasks.
+            </p>
+          </div>
+          <p>
+            This problem definition disallows:
+          </p>
+          <ul>
+            <li>Task-specific predicates or instances (objects)</li>
+            <li>Environmental models (e.g., maps, object locations)</li>
+            <li>Prior task-specific knowledge or experience</li>
+            <li>Fine-tuning of a model based on task-specific data</li>
+          </ul>
+          <p>
+            The key challenge is that the agent must bootstrap a strategy on-the-fly, relying solely on real-time interpretation
+            of the instruction and sensory inputs from the environment during task execution.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Problem Definition. -->
 
 
     <!-- Paper video. -->
@@ -202,6 +246,173 @@
       </div>
     </div>
     <!--/ Paper video. -->
+
+    <!-- Methodology. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Methodology</h2>
+        <div class="content has-text-justified">
+          <p>
+            Our approach comprises two high-level components:
+          </p>
+
+          <h3 class="title is-4">1. Natural Language Planning Engine</h3>
+          <p>
+            The Natural Language Planning Engine interprets user requests, converts them into structured task representations,
+            and manages the entire planning process. It consists of three sub-modules:
+          </p>
+
+          <div class="columns">
+            <div class="column">
+              <div class="box">
+                <h4 class="title is-5">Task Interpretation</h4>
+                <p>Interprets natural language instructions and gathers environmental context through robot sensors.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box">
+                <h4 class="title is-5">Goal Decomposition</h4>
+                <p>Breaks down tasks into smaller sub-tasks with completion conditions using General Predicates.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box">
+                <h4 class="title is-5">Action Planning</h4>
+                <p>Generates Behavior Trees in XML format to sequence actions for completing each sub-task.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="title is-4">2. Refinement Loop</h3>
+          <p>
+            The Refinement Loop oversees the execution of planned actions and adapts them based on real-time feedback from the environment.
+            It can be triggered by:
+          </p>
+          <ul>
+            <li><strong>General Errors:</strong> notClose, notVisible, doesNotExist</li>
+            <li><strong>Goal Condition Failures:</strong> When a sub-task completes but its goal condition is not satisfied</li>
+          </ul>
+          <p>
+            When errors occur, the LLM modifies the current Behavior Tree to guide successful execution, incorporating
+            detailed feedback and environmental context.
+          </p>
+
+          <div class="box has-background-info-light">
+            <p><strong>💬 Detailed Example:</strong>
+            For a complete walkthrough of our approach in action, see the
+            <a href="full_chat_interaction.html" class="has-text-link">full chat interaction</a>
+            showing the LLM decomposing the task "Bring a mug of coffee to the table" step-by-step.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ Methodology. -->
+
+    <!-- Results. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Experimental Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            We evaluated our approach on four household tasks in the AI2-THOR simulator, comparing against four baselines:
+            SMART-LLM, MLDT, BCR, and our approach without the refinement loop.
+          </p>
+
+          <h3 class="title is-4">Task Success Rates</h3>
+          <div class="table-container">
+            <table class="table is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Apple in Fridge</th>
+                  <th>Soak Mug</th>
+                  <th>Set Table</th>
+                  <th>Coffee to Table</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="has-background-success-light">
+                  <td><strong>ZKTP (ours)</strong></td>
+                  <td>50/50</td>
+                  <td>49/50</td>
+                  <td>45/50</td>
+                  <td>33/50</td>
+                </tr>
+                <tr>
+                  <td>ZKTP - No Refine</td>
+                  <td>46/50</td>
+                  <td>9/50</td>
+                  <td>7/50</td>
+                  <td>6/50</td>
+                </tr>
+                <tr>
+                  <td>BCR</td>
+                  <td>49/50</td>
+                  <td>28/50</td>
+                  <td>45/50</td>
+                  <td>50/50</td>
+                </tr>
+                <tr>
+                  <td>SMART-LLM</td>
+                  <td>50/50</td>
+                  <td>0/50</td>
+                  <td>46/50</td>
+                  <td>0/50</td>
+                </tr>
+                <tr>
+                  <td>MLDT</td>
+                  <td>50/50</td>
+                  <td>0/50</td>
+                  <td>0/50</td>
+                  <td>0/50</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="title is-4">Task Knowledge Requirements</h3>
+          <div class="table-container">
+            <table class="table is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Data Required (KB)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="has-background-success-light">
+                  <td><strong>ZKTP (ours)</strong></td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>ZKTP - No Refine</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>BCR</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>SMART-LLM</td>
+                  <td>43</td>
+                </tr>
+                <tr>
+                  <td>MLDT</td>
+                  <td>855,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>
+            Our approach achieves competitive performance while requiring <strong>zero task-specific knowledge</strong>,
+            highlighting its suitability for uncertain and novel scenarios. The refinement loop proves critical for
+            complex tasks, significantly improving success rates.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Results. -->
   </div>
 </section>
 
@@ -212,13 +423,12 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-<!--    <pre><code>@article{park2021nerfies,-->
-<!--  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},-->
-<!--  title     = {Nerfies: Deformable Neural Radiance Fields},-->
-<!--  journal   = {ICCV},-->
-<!--  year      = {2021},-->
-<!--}</code></pre>-->
-      Coming Soon!
+    <pre><code>@article{hoffmeister2025zktp,
+  author    = {Hoffmeister, Liam Merz and Scassellati, Brian and Rakita, Daniel},
+  title     = {Towards Zero-Knowledge Task Planning via a Language-based Approach},
+  journal   = {IEEE International Conference on Robotics and Automation (ICRA)},
+  year      = {2025},
+}</code></pre>
   </div>
 </section>
 
